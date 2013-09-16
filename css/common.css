@@ -1,0 +1,19 @@
+#header {
+	color: #fff;
+	background-color: #103FD9;
+}
+#header h2 {
+	margin: 0px;
+	margin-top: -5px;
+}
+#header h4 {
+	margin: 0px;
+	margin-top: -5px;
+}
+#header .container {
+	padding-top: 14px;
+	padding-bottom: 2px;
+}
+#header img {
+	float: left;
+}
