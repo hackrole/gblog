@@ -1,0 +1,8 @@
+ctags
+etags
+cscope.*
+filenametags
+makefiles
+*.log
+*.pyc
+*.o
