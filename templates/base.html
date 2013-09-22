@@ -1,39 +1,39 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-    <meta charset="UTF-8">
-    <title>hackrole's blog</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <meta charset="UTF-8">
+  <title>
+    {% block title %} hackrole's blog{% endblock %}
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 </head>
 <body>
+  {% block main %}
 	<div class="container">
-		<h1>hackrole's home</h1>
-		<div class="navbar-inverse">
-			<div class="nav-collapse" style="height:auto;">
-				<ul class="nav">
-				    <li><a href="#">首页</a></li>
-				    <li><a href="#">计划</a></li>
-				    <li><a href="#">资源</a></li>
-				    <li><a href="#">关于</a></li>
-				</ul>
-			</div>
-		</div>
+    {% block title %}
+      {% include "title.html" %}
+    {% endblock %}
+    <!-- /title -->
+
+    {% block content %}
 		<div id="content" class="row-fliod">
-		    <div class="span9 main">
-		        <h2>Main content Section</h2>
-		    </div>
-			<div class="span3 sidebar">
-			    <h2>Sidebar</h2>
-				<ul class="nav nav-tabs nav-stacked">
-				    <li><a href="#">Another link</a></li>
-				    <li><a href="#">link2</a></li>
-				    <li><a href="#">link3</a></li>
-				</ul>
-			</div>
+      {% block content_main %}
+      <div class="span9 main">
+        <h2>Main content Section</h2>
+      </div>
+      {% endblock %}
+      <!-- /main -->
+
+      {% block sidebar %}
+        {% include "sidebar.html" %}
+      {% endblock %}
+      <!-- /sidebar -->
 		</div>
+    {% endblock %}
 	</div>
-    <script src="js/jquery_1.10.2.min.js"></script>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
+  {% endblock %}
+  <script src="js/jquery_1.10.2.min.js"></script>
+  <script src="bootstrap/js/bootstrap.min.js"></script>
 </body>
 </html>
