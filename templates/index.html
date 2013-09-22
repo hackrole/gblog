@@ -1,0 +1,25 @@
+<h1>hackrole's home</h1>
+{% if not taglist %}
+    <p>not any tags now on</p>
+{% else %}
+    {% for tag in taglist %}
+    <p>{{ tag['title'] }}</p>
+    {% endfor %}
+{% endif %}
+
+
+{% if not catelist %}
+    <p>not any cate now</p>
+{% else %}
+    {% for cate in catelist %}
+    <p>{{ cate['title'] }}</p>
+    {% endfor %}
+{% endif %}
+
+{% if not blogs %}
+    <p>not any blog now</p>
+{% else %}
+    {% for blog in blogs %}
+    <p>{{ blog['title'] }}</p>
+    {% endfor %}
+{% endif %}
