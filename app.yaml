@@ -1,14 +1,14 @@
 application: hr-note
-version: 1
+version: gblog-first
 runtime: python27
 api_version: 1
 threadsafe: true
 
 handlers:
-- url: ^/static/.*
-  
+- url: /static/*
+  static_dir: static
 
-- url: /.*
+- url: /*
   script: blog.app
 
 libraries:
@@ -17,3 +17,5 @@ libraries:
 - name: webapp2
   version: latest
 
+builtins:
+- remote_api: on

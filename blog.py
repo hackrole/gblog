@@ -21,7 +21,6 @@ class BaseHandler(webapp2.RequestHandler):
 
 class IndexPage(BaseHandler):
     def get(self):
-        self.response.write(markdown.markdown(s))
         taglist = Tag.query().fetch()
         catelist = Category.query().fetch()
         blogs = Blog.query().order(-Blog.create_time).fetch(3)
