@@ -4,6 +4,42 @@
 import unittest
 import time
 from selenium import webdriver
+from models import Tag, Category, Blog
+
+
+def testdb_init():
+    # db clear
+    Blog.all().delete()
+    Tag.all().delete()
+    Category.all().delete()
+
+    t1 = Tag(title="emacs")
+    t2 = Tag(title="python")
+    t1.put()
+    t2.put()
+
+    c1 = Category(title='program')
+    c2 = Category(title='edit')
+    c1.put()
+    c2.put()
+
+    b1 = Blog(title='first blog')
+    b1.context = "this is my first blog, hello world"
+    b1.put()
+    b2 = Blog(title="second blog")
+    b2.context = "this is my second blog, hello python"
+    b2.tags = [t1, t2]
+    b2.put()
+    b3 = Blog(title="third blog")
+    b3.context = "this is my third blog, hello python"
+    b3.tags = [t1,]
+    b3.tags = c2
+    b3.put()
+    b4 = Blog(title="fourth blog")
+    b4.context = "this is my fourth blog, hello python"
+    b4.tags = [t2,]
+    b4.category = c1
+    b4.put()
 
 
 class BaseTestCase(unittest.TestCase):
@@ -16,21 +52,11 @@ class BaseTestCase(unittest.TestCase):
         self.ff.quit()
 
 
-class StaticTestCase(BaseTestCase):
-
-    def test_can_get_static_html(self):
-        base_url = self.base_url + "/static/static_html/"
-        # the the static index.html
-        self.ff.get(base_url +'index.html')
-        blog_title = self.ff.find_element_by_xpath('//h2')
-        self.assertEqual(u"hackrole's home", blog_title.text)
-
-    def test_can_get_the_jquery(self):
-        pass
-
 class BlogIndexTestCase(BaseTestCase):
     def setUp(self):
         super(BlogIndexTestCase, self).setUp()
+        # TODO: data init
+        testdb_init()
 
     def test_blog_index_page(self):
         url = self.base_url
