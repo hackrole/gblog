@@ -1,15 +1,22 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import sys
+sys.path.insert(0, "/home/daipeng/Desktop/program/google_appengine")
+
 import unittest
 import time
 from selenium import webdriver
+from google.appengine.api import memcache
+from google.appengine.ext import ndb
+from google.appengine.ext import testbed
+
 from models import Tag, Category, Blog
 
 
 def testdb_init():
     # db clear
-    Blog.all().delete()
+    Blog.query().delete()
     Tag.all().delete()
     Category.all().delete()
 
@@ -47,6 +54,12 @@ class BaseTestCase(unittest.TestCase):
         self.ff = webdriver.Firefox()
         self.base_url = "localhost:8080"
         self.ff.implicitly_wait(3)
+        self.testbed = testbed.Testbed()
+        # Then activate the testbed, which prepares the service stubs for use.
+        self.testbed.activate()
+        # Next, declare which service stubs you want to use.
+        self.testbed.init_datastore_v3_stub()
+        self.testbed.init_memcache_stub()
 
     def tearDown(self):
         self.ff.quit()
@@ -55,10 +68,10 @@ class BaseTestCase(unittest.TestCase):
 class BlogIndexTestCase(BaseTestCase):
     def setUp(self):
         super(BlogIndexTestCase, self).setUp()
-        # TODO: data init
-        testdb_init()
 
     def test_blog_index_page(self):
+        # TODO: data init
+        testdb_init()
         url = self.base_url
         self.ff.get(url)
         time.sleep(10)
