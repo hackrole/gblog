@@ -4,8 +4,8 @@
 from os import path
 import sys
 sys.path.insert(0,
-    path.join(path.dirname(path.dirname(path.realpath(__file__))), "google_appengine"
-))
+    path.dirname(path.dirname(path.realpath(__file__)))
+)
 print sys.path
 
 import unittest
@@ -28,11 +28,11 @@ class IndexTest(unittest.TestCase):
         tag2.put()
         cate = Category(title='emacs笔记')
         cate.put()
-        b1 = Blog(title="the first emacs blog", text="hello, world",
+        b1 = Blog(title="the first emacs blog", context="hello, world",
                   category=cate.key, tags=[tag1.key, tag2.key])
-        b2 = Blog(title="the second emacs blog", text="hello, world",
+        b2 = Blog(title="the second emacs blog", context="hello, world",
                   category=cate.key, tags=[tag1.key, tag2.key])
-        b3 = Blog(title="the third emacs blog", text="hello, world",
+        b3 = Blog(title="the third emacs blog", context="hello, world",
                   category=cate.key, tags=[tag1.key, tag2.key])
         b1.put()
         b2.put()
