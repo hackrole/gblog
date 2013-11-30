@@ -1,25 +1,106 @@
-<h1>hackrole's home</h1>
-{% if not taglist %}
-    <p>not any tags now on</p>
-{% else %}
-    {% for tag in taglist %}
-    <p>{{ tag['title'] }}</p>
-    {% endfor %}
-{% endif %}
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>hackrole's blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style type="text/css">
+      .title {
+        margin: 0px;
+        margin-top:-7px;
+        padding: 22px;
+        padding-left: 35px;
+      }
+      .content {
+      }
+      .bar {
+        background-color: #cacaca;
+        margin-bottom: 0px;
+        font-size: 22px;
+      }
+      .nav {
+        margin-left: 28px;
+        margin-bottom: 10px;
+        margin-top: 8px;
+        line-height: 32px;
+      }
+      .nav-tabs {
+        border: none;
+      }
+      .sidebar {
+        background-color: #f2f2f2;
+        padding-left: 14px;
+      }
+      .main {
+        /*border-right:1px solid #e8e8e8;*/
+        font-size: 16px;
+        padding-top: 22px;
+        padding-left: 12px;
+      }
+      ul {
+        list-style: none;
+      }
+    </style>
+</head>
+<body>
+	<div class="container">
+    <div class="title">
+      <h2>hackrole's home</h2>
+      <h3>生命若只是初见</h3>
+    </div>
 
-
-{% if not catelist %}
-    <p>not any cate now</p>
-{% else %}
-    {% for cate in catelist %}
-    <p>{{ cate['title'] }}</p>
-    {% endfor %}
-{% endif %}
-
-{% if not blogs %}
-    <p>not any blog now</p>
-{% else %}
-    {% for blog in blogs %}
-    <p>{{ blog['title'] }}</p>
-    {% endfor %}
-{% endif %}
+    <div class="content">
+      <div class="row-fluid bar">
+        <ul class="nav nav-tabs">
+          <li class="active">
+            <a href="/">首页</a>
+          </li>
+          <li><a href="/about">关于</a></li>
+          <li><a href="/plan">计划表</a></li>
+          <li><a href="/booklist">书目</a></li>
+		  <li><a href="/wiki">wiki</a></li>
+        </ul>
+      </div>
+      <div class="row-fluid">
+        <div class="span9 main">
+		  {% if not blogs %}
+		    <p>not any blog now</p>
+		  {% else %}
+			{% for blog in blogs %}
+			<div class="blog">
+		      <h2>{{ blog.title }}</h2>
+			  <span>{{ blog.create_time }}</span>
+              <div>{{ blog.context }}</div>
+			</div>
+			{% endfor %}
+    	  {% endif %}
+        </div>
+        <div class="span3 sidebar">
+          <h4>文章分类</h4>
+          <ul>
+			{% if not catelist %}
+			  <p>not any cate now</p>
+			{% else %}
+			  {% for cate in catelist %}
+			    <li><a href="#">{{ cate['title'] }}</a></li>
+		      {% endfor %}
+		    {% endif %}
+          </ul>
+          <h4>热门标签</h4>
+          <ul>
+			{% if not taglist %}
+			  <p>not any tags now on</p>
+			{% else %}
+			  {% for tag in taglist %}
+			    <li><a href="#">{{ tag['title'] }}</a></li>
+			  {% endfor %}
+			{% endif %}
+          </ul>
+        </div>
+      </div>
+	</div>
+    <script src="/static/js/jquery_1.10.2.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>
