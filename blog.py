@@ -74,6 +74,7 @@ class PubBLogPage(BaseHandler):
 class DetailPage(BaseHandler):
     def get(self, bid):
         blog = Blog.query(Blog.key==bid).fetch()
+        self.render('detail.html', blog=blog)
 
 
 urls = [

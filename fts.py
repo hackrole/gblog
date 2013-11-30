@@ -16,10 +16,6 @@ from models import Tag, Category, Blog
 
 def testdb_init():
     # db clear
-    Blog.query().delete()
-    Tag.all().delete()
-    Category.all().delete()
-
     t1 = Tag(title="emacs")
     t2 = Tag(title="python")
     t1.put()
@@ -35,40 +31,39 @@ def testdb_init():
     b1.put()
     b2 = Blog(title="second blog")
     b2.context = "this is my second blog, hello python"
-    b2.tags = [t1, t2]
+    b2.tags = [t1.key, t2.key]
     b2.put()
     b3 = Blog(title="third blog")
     b3.context = "this is my third blog, hello python"
-    b3.tags = [t1,]
-    b3.tags = c2
+    b3.tags = [t1.key,]
+    b3.category = c2.key
     b3.put()
     b4 = Blog(title="fourth blog")
     b4.context = "this is my fourth blog, hello python"
-    b4.tags = [t2,]
-    b4.category = c1
+    b4.tags = [t2.key,]
+    b4.category = c1.key
     b4.put()
 
 
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
+        # the selenium firefox
         self.ff = webdriver.Firefox()
         self.base_url = "localhost:8080"
         self.ff.implicitly_wait(3)
+
+        # the testbed setup
         self.testbed = testbed.Testbed()
-        # Then activate the testbed, which prepares the service stubs for use.
         self.testbed.activate()
-        # Next, declare which service stubs you want to use.
         self.testbed.init_datastore_v3_stub()
         self.testbed.init_memcache_stub()
 
     def tearDown(self):
         self.ff.quit()
+        self.testbed.deactivate()
 
 
 class BlogIndexTestCase(BaseTestCase):
-    def setUp(self):
-        super(BlogIndexTestCase, self).setUp()
-
     def test_blog_index_page(self):
         # TODO: data init
         testdb_init()
