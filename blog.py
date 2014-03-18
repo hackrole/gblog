@@ -19,6 +19,81 @@ class BaseHandler(webapp2.RequestHandler):
         self.response.write(rv)
 
 
+class BlogHandler(BaseHandler):
+    """
+    handlers for the blog interfaces.
+    """
+    def get(self):
+        """
+        get the blog by id
+        """
+        pass
+
+    def list(self):
+        """
+        get the blog list by condition:w
+        """
+        pass
+
+    def post(self):
+        """
+        update the blog by id, auth needed
+        """
+        pass
+
+    def delete(self):
+        """
+        delete the blog by set status, auth needed
+        """
+        pass
+
+    def put(self):
+        """
+        new blog, auth needed
+        """
+
+    def put_by_makedown(self):
+        """
+        put new blog by markupdown file
+        """
+        pass
+
+
+class TagHandler(BaseHandler):
+    """
+    handlers for blog tag
+    """
+
+    def get(self):
+        """
+        get tag by id
+        """
+        pass
+
+    def list(self):
+        """
+        get tag list by condition
+        """
+        pass
+
+
+class CategoryHandler(BaseHandler):
+    """
+    handlers for blog category
+    """
+    def get(self):
+        """
+        get category by id
+        """
+        pass
+
+    def list(self):
+        """
+        get category list by condition
+        """
+        pass
+
+
 class IndexPage(BaseHandler):
     def get(self):
         taglist = Tag.query().fetch()
