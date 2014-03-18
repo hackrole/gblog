@@ -3,11 +3,10 @@
 
 import webapp2
 import sys
-print sys.path
 import blog
 from models import Tag, Blog, Category
 from google.appengine.ext import testbed
-from .base import BaseTestCase
+from base import BaseTestCase
 
 
 class ModelTest(BaseTestCase):

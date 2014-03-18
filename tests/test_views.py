@@ -1,19 +1,16 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+
 import webapp2
 import blog # the blog apps
 from models import Tag, Blog, Category
 from google.appengine.ext import testbed
+from base import BaseTestCase
 
 
-class IndexTest(unittest.TestCase):
-    def setUp(self):
-        self.testbed = testbed.Testbed()
-        self.testbed.activate()
-        self.testbed.init_datastore_v3_stub()
-        self.testbed.init_memcache_stub()
-
+class IndexTest(BaseTestCase):
+    def init_data(self):
         tag1 = Tag(title='emacs')
         tag2 = Tag(title='vim')
         tag1.put()
