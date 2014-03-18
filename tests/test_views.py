@@ -1,14 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from os import path
-import sys
-sys.path.insert(0,
-    path.dirname(path.dirname(path.realpath(__file__)))
-)
-print sys.path
-
-import unittest
 import webapp2
 import blog # the blog apps
 from models import Tag, Blog, Category
@@ -48,5 +40,4 @@ class IndexTest(unittest.TestCase):
         # tags
         self.assertIn('emacs', response.body)
 
-if __name__ == '__main__':
-    unittest.main()
+

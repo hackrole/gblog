@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import json
 from google.appengine.ext import ndb
 
 
@@ -23,6 +24,16 @@ class Blog(ndb.Model):
     tags = ndb.KeyProperty(kind=Tag, repeated=True)
     create_time = ndb.DateTimeProperty(auto_now_add=True)
     last_update_time = ndb.DateTimeProperty(auto_now=True)
+
+    def to_json(self):
+        return json.dumps({
+            'id': self.key.urlsafe(),
+            'title': self.title,
+            'content': self.context,
+            'author': self.author,
+            'category': self.category.urlsafe(),
+            'tags': [tag.urlsafe() for tag in self.tags],
+        })
 
 
 class Wiki(ndb.Model):
