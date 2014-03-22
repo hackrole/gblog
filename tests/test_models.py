@@ -21,7 +21,7 @@ class ModelTest(BaseTestCase):
         tag1.put()
         cate = Category(title='emacs笔记')
         cate.put()
-        b1 = Blog(title="the first emacs blog", context="hello, world",
+        b1 = Blog(title="the first emacs blog", content="hello, world",
                   category=cate.key, tags=[tag1.key])
         b1.put()
 

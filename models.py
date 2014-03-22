@@ -18,21 +18,23 @@ class Tag(ndb.Model):
 
 class Blog(ndb.Model):
     title = ndb.StringProperty(required=True)
-    context = ndb.TextProperty()
+    content = ndb.TextProperty()
     author = ndb.StringProperty(default="hackrole")
     category = ndb.KeyProperty(kind=Category)
     tags = ndb.KeyProperty(kind=Tag, repeated=True)
-    create_time = ndb.DateTimeProperty(auto_now_add=True)
-    last_update_time = ndb.DateTimeProperty(auto_now=True)
+    create_time = ndb.TimeProperty(auto_now_add=True)
+    update_time = ndb.TimeProperty(auto_now=True)
 
     def to_json(self):
         return json.dumps({
             'id': self.key.urlsafe(),
             'title': self.title,
-            'content': self.context,
+            'content': self.content,
             'author': self.author,
-            'category': self.category.urlsafe(),
-            'tags': [tag.urlsafe() for tag in self.tags],
+            'category_id': self.category.urlsafe(),
+            'tags_id': [tag.urlsafe() for tag in self.tags],
+            'create_time': self.create_time.strftime('%Y-%m-%d %H:%M:%s'),
+            'update_time': self.update_time.strftime('%Y-%m-%d %H:%M:%s'),
         })
 
 
