@@ -30,7 +30,7 @@ class BaseTestCase(unittest.TestCase):
         if hasattr(self, "init_data") and callable(self.init_data):
             self.init_data()
 
-    def testDown(self):
+    def tearDown(self):
         """
         close GAE testbed, and tear down test data
         write you clean_data fun in sub class to
