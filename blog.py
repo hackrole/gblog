@@ -11,109 +11,92 @@ from google.appengine.ext import ndb
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 
-class BaseHandler(webapp2.RequestHandler):
-    @webapp2.cached_property
-    def jinja2(self):
-        return jinja2.get_jinja2(app=self.app)
+class WSGIApplication(webapp2.WSGIApplication):
+    def __init__(self, *args, **kw):
+        super(WSGIApplication, self).__init__(*args, **kw)
+        self.router.set_dispatcher(self.__class__.custom_dispatcher)
 
-    def render(self, template, **context):
-        rv = self.jinja2.render_template(template, **context)
-        self.response.write(rv)
+    @staticmethod
+    def custom_dispatcher(router, request, response):
+        rv = router.default_dispatcher(request, response)
+        # json obj dumps
+        if isinstance(rv, dict):
+            rv = json.dumps(rv)
 
+        if isinstance(rv, basestring):
+            return webapp2.Response(rv)
 
-class BlogHandler(BaseHandler):
-    """
-    handlers for the blog interfaces.
-    """
-    def get(self, blog_id_str):
-        """
-        get the blog by id
-        """
-        blog = ndb.Key(urlsafe=blog_id_str).get()
+        return rv
 
-        result = blog.to_json()
-        self.response.write(result)
-
-    def list(self):
-        """
-        get the blog list by condition:w
-        """
-        page = self.request.get('page', 1)
-        page_size = self.request.get('pageSize', 5)
-        offset = (page - 1) * page_size
-        blog_list = Blog.query().fetch_page(page_size, offset=offset)
-        print blog_list
-        result = [blog.to_json for blog in blog_list]
-        self.response.write(','.join(result))
-
-    def post(self):
-        """
-        update the blog by id, auth needed
-        """
-        pass
-
-    def delete(self):
-        """
-        delete the blog by set status, auth needed
-        """
-        pass
-
-    def put(self):
-        """
-        new blog, auth needed
-        """
-
-    def put_by_makedown(self):
-        """
-        put new blog by markupdown file
-        """
-        pass
+    def route(self, *args, **kw):
+        def _wrapper(func):
+            self.router.add(webapp2.Route(handler=func, *args, **kw))
+            return func
+        return _wrapper
 
 
-class TagHandler(BaseHandler):
-    """
-    handlers for blog tag
-    """
-
-    def get(self):
-        """
-        get tag by id
-        """
-        pass
-
-    def list(self):
-        """
-        get tag list by condition
-        """
-        pass
+DEBUG = True
+app = WSGIApplication(debug=DEBUG)
 
 
-class CategoryHandler(BaseHandler):
-    """
-    handlers for blog category
-    """
-    def get(self):
-        """
-        get category by id
-        """
-        pass
-
-    def list(self):
-        """
-        get category list by condition
-        """
-        pass
+# the data api interfaces
+@app.route('/hello')
+def hello(request):
+    return "hello world"
 
 
-urls = [
-    ('/blog/get/(\w+)', BlogHandler),
-    webapp2.Route('/blog/list', handler='blog.BlogHandler:list', name="blog/list")
-]
+@app.route('/api/get/<blog_str:\w+>')
+def blog_get_api(request, blog_str):
+    blog_key = ndb.Key(urlsafe=blog_stgr)
+    blog = blog_key.get()
+    return blog.to_json_str()
 
-app = webapp2.WSGIApplication(
-    urls,
-    debug=True
-)
+
+@app.route('/api/list', name='blog_list_api')
+def blog_list_api(request):
+    pass
+
+
+@app.route('/api/delete/<blog_str:\w+>', name='blog_delete_api')
+def blog_delete_api(request, blog_str):
+    blog_id = ndb.Key(urlsafe=blog_str)
+    blog = blog_id.get()
+    blog.delete()
+    return {'success': True, 'msg': 'ok'}
+
+
+@app.route('/api/new', name="blog_new")
+def blog_new_api(request):
+    blog = Blog()
+    blog.title = request.POST.get('title')
+    blog.content = request.POST.get('content')
+    blog.author = request.POST.get('author')
+    blog.category = ndb.Key(urlsafe=request.POST.get('category_str'))
+    blog.tags = [ndb.Key(urlsafe=tag_str)
+            for tag_str in request.POST.getall('tags_str')]
+    blog.put()
+    return {'success': True, 'msg': 'ok'}
+
+
+@app.route('/api/blog/update/<blog_str:\w+>',
+           name='blog_update_api')
+def blog_update_api(request, blog_str):
+    blog_id = ndb.Key(urlsafe=blog_str)
+    blog = blog_id.get()
+    blog.title = request.POST.get('title', blog.title)
+    blog.content = request.POST.get('content', blog.content)
+    blog.author = request.POST.get('author', blog.author)
+    blog.category = ndb.Key(urlsafe=request.POST.get('category_str'))
+    blog.tags = [ndb.Key(urlsafe=tag_str)
+            for tag_str in request.POST.getall('tags_str')]
+    blog.put()
+    return {'success': True, 'msg': 'ok'}
+
+
+# the views handlers
+@app.route('/blog/index')
+def index(request):
+    pass
 
 
 if __name__ == '__main__':

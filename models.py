@@ -2,58 +2,69 @@
 # encoding: utf-8
 
 import json
+from datetime import time as dtime
 from google.appengine.ext import ndb
 
 
-class Category(ndb.Model):
+def _switch_ndbProperty_type_to_jsonable(k, v):
+    """ swtich ndb property type and return jsonable value """
+    if isinstance(v, ndb.key.Key):
+        return (k, v.urlsafe())
+    elif isinstance(v, dtime):
+        return (k, v.strftime('%Y-%m-%d %H:%M:%s'))
+    elif isinstance(v, list):
+        pass
+
+    return (k, v)
+
+
+class BaseModel(ndb.Model):
+    def to_json(self):
+        to_dict = self.to_dict()
+        import pdb
+        pdb.set_trace()
+        print to_dict
+        jsonable_tuple = map(_switch_ndbProperty_type_to_jsonable,
+                            to_dict.keys(), to_dict.values())
+        print jsonable_tuple
+
+        return dict(jsonable_tuple)
+
+    def to_json_str(self):
+        return json.dumps(self.to_json())
+
+
+class Category(BaseModel):
     title = ndb.StringProperty(required=True)
     order = ndb.IntegerProperty(default=10)
-    create_time = ndb.DateTimeProperty(auto_now_add=True)
+    create_time = ndb.TimeProperty(auto_now_add=True)
+    is_alive = ndb.BooleanProperty(default=True)
 
 
-class Tag(ndb.Model):
+class Tag(BaseModel):
     title = ndb.StringProperty(required=True)
-    create_time = ndb.DateTimeProperty(auto_now_add=True)
+    order = ndb.IntegerProperty(default=10)
+    create_time = ndb.TimeProperty(auto_now_add=True)
+    is_alive = ndb.BooleanProperty(default=True)
 
 
-class Blog(ndb.Model):
+class Blog(BaseModel):
     title = ndb.StringProperty(required=True)
     content = ndb.TextProperty()
     author = ndb.StringProperty(default="hackrole")
-    category = ndb.KeyProperty(kind=Category)
+    category = ndb.KeyProperty(kind=Category, required=True)
     tags = ndb.KeyProperty(kind=Tag, repeated=True)
     create_time = ndb.TimeProperty(auto_now_add=True)
     update_time = ndb.TimeProperty(auto_now=True)
+    is_delete = ndb.BooleanProperty(default=False)
 
-    def to_json(self):
-        return json.dumps({
-            'id': self.key.urlsafe(),
-            'title': self.title,
-            'content': self.content,
-            'author': self.author,
-            'category_id': self.category.urlsafe(),
-            'tags_id': [tag.urlsafe() for tag in self.tags],
-            'create_time': self.create_time.strftime('%Y-%m-%d %H:%M:%s'),
-            'update_time': self.update_time.strftime('%Y-%m-%d %H:%M:%s'),
-        })
+    def delete(self):
+        self.is_delete = True
+        self.put()
 
 
-class Wiki(ndb.Model):
-    title = ndb.StringProperty(required=True)
-    create_time = ndb.DateTimeProperty(auto_now_add=True)
-    update_time = ndb.DateTimeProperty(auto_now=True)
-
-
-class Book(ndb.Model):
-    title = ndb.StringProperty(required=True)
-    download_urls = ndb.StringProperty() # TODO: string to list
-    buy_urls = ndb.StringProperty()
-    create_time = ndb.DateTimeProperty(auto_now_add=True)
-    update_time = ndb.DateTimeProperty(auto_now=True)
-
-
-class Admin(ndb.Model):
+class Admin(BaseModel):
     email = ndb.StringProperty(required=True)
     name = ndb.StringProperty(required=True)
     password = ndb.StringProperty(required=True)
-    create_time = ndb.DateTimeProperty(auto_now_add=True)
+    create_time = ndb.TimeProperty(auto_now_add=True)
