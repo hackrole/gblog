@@ -21,12 +21,8 @@ def _switch_ndbProperty_type_to_jsonable(k, v):
 class BaseModel(ndb.Model):
     def to_json(self):
         to_dict = self.to_dict()
-        import pdb
-        pdb.set_trace()
-        print to_dict
         jsonable_tuple = map(_switch_ndbProperty_type_to_jsonable,
                             to_dict.keys(), to_dict.values())
-        print jsonable_tuple
 
         return dict(jsonable_tuple)
 

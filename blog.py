@@ -45,19 +45,19 @@ def hello(request):
     return "hello world"
 
 
-@app.route('/api/get/<blog_str:\w+>')
+@app.route('/api/blog/get/<blog_str:\w+>')
 def blog_get_api(request, blog_str):
-    blog_key = ndb.Key(urlsafe=blog_stgr)
+    blog_key = ndb.Key(urlsafe=blog_str)
     blog = blog_key.get()
     return blog.to_json_str()
 
 
-@app.route('/api/list', name='blog_list_api')
+@app.route('/api/blog/list', name='blog_list_api')
 def blog_list_api(request):
     pass
 
 
-@app.route('/api/delete/<blog_str:\w+>', name='blog_delete_api')
+@app.route('/api/blog/delete/<blog_str:\w+>', name='blog_delete_api')
 def blog_delete_api(request, blog_str):
     blog_id = ndb.Key(urlsafe=blog_str)
     blog = blog_id.get()
@@ -65,7 +65,7 @@ def blog_delete_api(request, blog_str):
     return {'success': True, 'msg': 'ok'}
 
 
-@app.route('/api/new', name="blog_new")
+@app.route('/api/blog/new', name="blog_new")
 def blog_new_api(request):
     blog = Blog()
     blog.title = request.POST.get('title')
@@ -73,9 +73,9 @@ def blog_new_api(request):
     blog.author = request.POST.get('author')
     blog.category = ndb.Key(urlsafe=request.POST.get('category_str'))
     blog.tags = [ndb.Key(urlsafe=tag_str)
-            for tag_str in request.POST.getall('tags_str')]
+            for tag_str in request.POST.get('tags_str').split(',')]
     blog.put()
-    return {'success': True, 'msg': 'ok'}
+    return {'blog_str': blog.key.urlsafe()}
 
 
 @app.route('/api/blog/update/<blog_str:\w+>',
