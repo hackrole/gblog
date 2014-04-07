@@ -47,7 +47,6 @@ class Tag(BaseModel):
 class Blog(BaseModel):
     title = ndb.StringProperty(required=True)
     content = ndb.TextProperty()
-    author = ndb.StringProperty(default="hackrole")
     category = ndb.KeyProperty(kind=Category, required=True)
     tags = ndb.KeyProperty(kind=Tag, repeated=True)
     create_time = ndb.TimeProperty(auto_now_add=True)

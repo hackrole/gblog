@@ -39,12 +39,6 @@ DEBUG = True
 app = WSGIApplication(debug=DEBUG)
 
 
-# the data api interfaces
-@app.route('/hello')
-def hello(request):
-    return "hello world"
-
-
 @app.route('/api/blog/get/<blog_str:\w+>')
 def blog_get_api(request, blog_str):
     blog_key = ndb.Key(urlsafe=blog_str)
@@ -57,8 +51,8 @@ def blog_list_api(request):
     pass
 
 
-@app.route('/api/blog/delete/<blog_str:\w+>', name='blog_delete_api')
-def blog_delete_api(request, blog_str):
+@app.route('/api/delete/<model>/<model_str:\w+>', name='model_delete')
+def blog_delete_api(request, model, model_str):
     blog_id = ndb.Key(urlsafe=blog_str)
     blog = blog_id.get()
     blog.delete()
@@ -92,6 +86,10 @@ def blog_update_api(request, blog_str):
     blog.put()
     return {'success': True, 'msg': 'ok'}
 
+
+@app.route("/hello")
+def hello(request):
+    return "hello world"
 
 # the views handlers
 @app.route('/blog/index')
