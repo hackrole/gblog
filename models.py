@@ -34,14 +34,17 @@ class Category(BaseModel):
     title = ndb.StringProperty(required=True)
     order = ndb.IntegerProperty(default=10)
     create_time = ndb.TimeProperty(auto_now_add=True)
-    is_alive = ndb.BooleanProperty(default=True)
 
+    def delete(self):
+        raise Exception("unable to delete")
 
 class Tag(BaseModel):
     title = ndb.StringProperty(required=True)
     order = ndb.IntegerProperty(default=10)
     create_time = ndb.TimeProperty(auto_now_add=True)
-    is_alive = ndb.BooleanProperty(default=True)
+
+    def delete(self):
+        raise Exception("unable to delete")
 
 
 class Blog(BaseModel):

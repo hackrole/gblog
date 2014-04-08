@@ -87,6 +87,29 @@ def blog_update_api(request, blog_str):
     return {'success': True, 'msg': 'ok'}
 
 
+# modules
+@app.route('/module/hot_tags', name='hot_tags_tapi')
+def hot_tags_module(request):
+    limit = int(request.GET.get('limit'))
+    tags = Tags.query().order('-order').fetch(limit)
+    return render_template('hot_tags', tags=tags)
+
+
+@app.route('/module/categorys', name='categorys')
+def category_module(request):
+    categorys = Category.query().order('-order').fetch()
+    return render_template('categorys', categorys=categorys)
+
+@app.route('/module/blog_detail/<blog_str:\w+>', name='detail')
+def blog_detail_module(request, blog_str):
+    blog = ndb.Key(urlsafe=blog_str).get()
+    return render_template('blog_detail', blog=blog)
+
+@app.route('/module/blog_list', name='blog_list')
+def blog_list_module(request):
+
+    return render_template('blog_list', blogs=blogs)
+
 @app.route("/hello")
 def hello(request):
     return "hello world"
