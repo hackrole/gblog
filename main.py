@@ -4,11 +4,13 @@
 import webapp2
 import json
 from lib import markdown
-from models import Blog, Tag, Category
+from webapp2_extras import jinja2
+from models import Blog, Tag, Admin
 from google.appengine.api import users
 from webapp2_extras import jinja2
 from google.appengine.ext import ndb
 from google.appengine.ext.webapp.util import run_wsgi_app
+from google.appengine.api import users
 
 
 class WSGIApplication(webapp2.WSGIApplication):
@@ -38,6 +40,33 @@ class WSGIApplication(webapp2.WSGIApplication):
 DEBUG = True
 app = WSGIApplication(debug=DEBUG)
 
+def render_template(template, **kw):
+    render = jinja2.get_jinja2(app=app)
+    rv = render.render_template(template, **kw)
+    return rv
+
+
+def admin_auth(request):
+    email = request.params.get('email', '')
+    pwd = request.params.get('pwd', '')
+    if not Admin.auth(email, pwd):
+        webapp2.abort(401, "admin required")
+    return True
+
+
+@app.route('/api/admin_init')
+def admin_init(request):
+    """ init the admin by the browser login """
+    if not users.is_current_user_admin():
+        webapp2.abort(500, "admin required")
+
+    admin = Admin()
+    admin.email = "daipeng123456@gmail.com"
+    admin.name = "hackrole"
+    admin.password = '123456'
+    admin.put()
+    return "admin init success"
+
 
 @app.route('/api/blog/get/<blog_str:\w+>')
 def blog_get_api(request, blog_str):
@@ -61,13 +90,11 @@ def blog_delete_api(request, model, model_str):
 
 @app.route('/api/blog/new', name="blog_new")
 def blog_new_api(request):
+    if not admin_auth(request):
+        webapp2.abort(500)
     blog = Blog()
     blog.title = request.POST.get('title')
     blog.content = request.POST.get('content')
-    blog.author = request.POST.get('author')
-    blog.category = ndb.Key(urlsafe=request.POST.get('category_str'))
-    blog.tags = [ndb.Key(urlsafe=tag_str)
-            for tag_str in request.POST.get('tags_str').split(',')]
     blog.put()
     return {'blog_str': blog.key.urlsafe()}
 
@@ -80,7 +107,6 @@ def blog_update_api(request, blog_str):
     blog.title = request.POST.get('title', blog.title)
     blog.content = request.POST.get('content', blog.content)
     blog.author = request.POST.get('author', blog.author)
-    blog.category = ndb.Key(urlsafe=request.POST.get('category_str'))
     blog.tags = [ndb.Key(urlsafe=tag_str)
             for tag_str in request.POST.getall('tags_str')]
     blog.put()
@@ -95,10 +121,6 @@ def hot_tags_module(request):
     return render_template('hot_tags', tags=tags)
 
 
-@app.route('/module/categorys', name='categorys')
-def category_module(request):
-    categorys = Category.query().order('-order').fetch()
-    return render_template('categorys', categorys=categorys)
 
 @app.route('/module/blog_detail/<blog_str:\w+>', name='detail')
 def blog_detail_module(request, blog_str):
@@ -110,14 +132,20 @@ def blog_list_module(request):
 
     return render_template('blog_list', blogs=blogs)
 
+
 @app.route("/hello")
 def hello(request):
-    return "hello world"
+    admin_auth(request)
+    admin = Admin.query().get()
+    return "hello world, %s" % admin.name
+
 
 # the views handlers
 @app.route('/blog/index')
 def index(request):
-    pass
+    blog = Blog.query().fetch()
+    print blog
+    return render_template('index.html', blog=blog)
 
 
 if __name__ == '__main__':

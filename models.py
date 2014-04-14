@@ -29,14 +29,9 @@ class BaseModel(ndb.Model):
     def to_json_str(self):
         return json.dumps(self.to_json())
 
-
-class Category(BaseModel):
-    title = ndb.StringProperty(required=True)
-    order = ndb.IntegerProperty(default=10)
-    create_time = ndb.TimeProperty(auto_now_add=True)
-
-    def delete(self):
-        raise Exception("unable to delete")
+    @classmethod
+    def get_by_urlsafe(cls, urlsafe):
+        return nkd.Key(urlsafe=urlsafe).get()
 
 class Tag(BaseModel):
     title = ndb.StringProperty(required=True)
@@ -50,7 +45,6 @@ class Tag(BaseModel):
 class Blog(BaseModel):
     title = ndb.StringProperty(required=True)
     content = ndb.TextProperty()
-    category = ndb.KeyProperty(kind=Category, required=True)
     tags = ndb.KeyProperty(kind=Tag, repeated=True)
     create_time = ndb.TimeProperty(auto_now_add=True)
     update_time = ndb.TimeProperty(auto_now=True)
@@ -66,3 +60,9 @@ class Admin(BaseModel):
     name = ndb.StringProperty(required=True)
     password = ndb.StringProperty(required=True)
     create_time = ndb.TimeProperty(auto_now_add=True)
+
+    @classmethod
+    def auth(cls, email, pwd):
+        if cls.query(Admin.email==email, Admin.password==pwd).get():
+            return True
+        return False

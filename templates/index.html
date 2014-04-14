@@ -64,14 +64,14 @@
       </div>
       <div class="row-fluid">
         <div class="span9 main">
-		  {% if not blogs %}
+		  {% if not blog %}
 		    <p>not any blog now</p>
 		  {% else %}
-			{% for blog in blogs %}
+			{% for b in blog %}
 			<div class="blog">
-		      <h2>{{ blog.title }}</h2>
-			  <span>{{ blog.create_time }}</span>
-              <div>{{ blog.context }}</div>
+		      <h2>{{ b.title }}</h2>
+			  <span>{{ b.create_time }}</span>
+              <div>{{ b.content }}</div>
 			</div>
 			{% endfor %}
     	  {% endif %}
