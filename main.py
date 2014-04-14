@@ -102,13 +102,9 @@ def blog_new_api(request):
 @app.route('/api/blog/update/<blog_str:\w+>',
            name='blog_update_api')
 def blog_update_api(request, blog_str):
-    blog_id = ndb.Key(urlsafe=blog_str)
-    blog = blog_id.get()
+    blog = Blog.get_by_urlsafe(blog_str)
     blog.title = request.POST.get('title', blog.title)
     blog.content = request.POST.get('content', blog.content)
-    blog.author = request.POST.get('author', blog.author)
-    blog.tags = [ndb.Key(urlsafe=tag_str)
-            for tag_str in request.POST.getall('tags_str')]
     blog.put()
     return {'success': True, 'msg': 'ok'}
 
@@ -144,8 +140,10 @@ def hello(request):
 @app.route('/blog/index')
 def index(request):
     blog = Blog.query().fetch()
-    print blog
-    return render_template('index.html', blog=blog)
+    hot_tags = Tag.query().fetch()
+    print hot_tags
+    return render_template('index.html',
+                           blog=blog, hot_tags=hot_tags)
 
 
 if __name__ == '__main__':

@@ -1,8 +1,22 @@
-<div class="span3 sidebar">
-    <h2>Sidebar</h2>
-    <ul class="nav nav-tabs nav-stacked">
-        <li><a href="#">Another link</a></li>
-        <li><a href="#">link2</a></li>
-        <li><a href="#">link3</a></li>
-    </ul>
-</div>
+<ul class="nav nav-list">
+  <!-- /hot-tags list -->
+  <li class="nav-header">热门标签</li>
+  {% if hot_tags %}
+    {% for tag in hot_tags %}
+      <li><a href="#">{{ tag.title }}</a></li>
+    {% endfor %}
+  {% else %}
+    <li>not tags found</li>
+  {% endif %}
+  <!-- /hot-tags list -->
+
+  <li class="divider"></li>
+
+  <li class="nav-header">最新评论</li>
+  <li><a href="#">emacs</a></li>
+  <li><a href="#">vim</a></li>
+  <li><a href="#">linux</a></li>
+  <li><a href="#">python</a></li>
+  <li><a href="#">ruby</a></li>
+
+</ul>
