@@ -31,7 +31,7 @@ class BaseModel(ndb.Model):
 
     @classmethod
     def get_by_urlsafe(cls, urlsafe):
-        return nkd.Key(urlsafe=urlsafe).get()
+        return ndb.Key(urlsafe=urlsafe).get()
 
 class Tag(BaseModel):
     title = ndb.StringProperty(required=True)

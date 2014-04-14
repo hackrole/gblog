@@ -14,8 +14,11 @@ def main():
         'content': 'the first blog',
     }
 
-    response = requests.post(url, post_data,
-                             proxies=settings.PROXY)
+    if settings.DEBUG:
+        response = requests.post(url, post_data)
+    else:
+        response = requests.post(url, post_data,
+                                proxies=settings.PROXY)
     print response
     print response.text
 

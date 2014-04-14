@@ -2,15 +2,16 @@
 
 {% block blog_main %}
 <div class="blog-list">
-  {% if not blog %}
+  {% if not blog_list %}
     <p>not any blog now</p>
   {% else %}
-    {% for b in blog %}
+    {% for blog in blog_list %}
     <div class="blog">
-      <h2>{{ b.title }}</h2>
-      <span>{{ b.create_time }}</span>
-      <div>{{ b.content }}</div>
+      <h2><a href="/detail/{{ blog.key.urlsafe() }}">{{ blog.title }}</a></h2>
+      <h4>{{ blog.create_time }}</h4>
+      <div>{{ blog.content }}</div>
     </div>
+    <hr/>
     {% endfor %}
   {% endif %}
 </div>

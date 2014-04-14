@@ -138,12 +138,19 @@ def hello(request):
 
 
 # the views handlers
-@app.route('/blog/index')
+@app.route('/index')
 def index(request):
-    blog = Blog.query().fetch()
+    blog_list = Blog.query().fetch()
     hot_tags = Tag.query().fetch()
     print hot_tags
     return render_template('index.html',
+                           blog_list=blog_list, hot_tags=hot_tags)
+
+@app.route('/detail/<blog_str:.+>')
+def detail(request, blog_str):
+    blog = Blog.get_by_urlsafe(blog_str)
+    hot_tags = Tag.query().fetch()
+    return render_template('detail.html',
                            blog=blog, hot_tags=hot_tags)
 
 
