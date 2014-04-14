@@ -58,7 +58,8 @@ def admin_auth(request):
 def admin_init(request):
     """ init the admin by the browser login """
     if not users.is_current_user_admin():
-        webapp2.abort(500, "admin required")
+        result = "<a href='%s'>登录</a>" % users.create_login_url('/api/admin_init')
+        return result
 
     admin = Admin()
     admin.email = "daipeng123456@gmail.com"

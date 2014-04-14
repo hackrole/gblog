@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import requests
-import setttings
+import settings
 
 
 def main():
@@ -14,7 +14,8 @@ def main():
         'content': 'the first blog',
     }
 
-    response = requests.post(url, post_data)
+    response = requests.post(url, post_data,
+                             proxies=settings.PROXY)
     print response
     print response.text
 
