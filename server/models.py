@@ -11,7 +11,7 @@ def _switch_ndbProperty_type_to_jsonable(k, v):
     if isinstance(v, ndb.key.Key):
         return (k, v.urlsafe())
     elif isinstance(v, dtime):
-        return (k, v.strftime('%Y-%m-%d %H:%M:%s'))
+        return (k, v.strftime('%Y-%m-%d %H:%M:%S'))
     elif isinstance(v, list):
         pass
 
@@ -32,6 +32,7 @@ class BaseModel(ndb.Model):
     @classmethod
     def get_by_urlsafe(cls, urlsafe):
         return ndb.Key(urlsafe=urlsafe).get()
+
 
 class Tag(BaseModel):
     title = ndb.StringProperty(required=True)
